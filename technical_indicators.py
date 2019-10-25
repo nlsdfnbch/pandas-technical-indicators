@@ -32,6 +32,8 @@ def moving_average(df, n):
     """
     MA = pd.Series(df['Close'].rolling(n, min_periods=n).mean(), name='MA_' + str(n))
     df = df.join(MA)
+#Rename to reflect period
+    df.rename(columns = {'MA' : 'MA{}'.format(n)}, inplace=True)
     return df
 
 
@@ -44,6 +46,8 @@ def exponential_moving_average(df, n):
     """
     EMA = pd.Series(df['Close'].ewm(span=n, min_periods=n).mean(), name='EMA_' + str(n))
     df = df.join(EMA)
+    #Rename to reflect period
+    df.rename(columns = {'MA' : 'MA{}'.format(n)}, inplace=True) 	      
     return df
 
 
@@ -56,6 +60,8 @@ def momentum(df, n):
     """
     M = pd.Series(df['Close'].diff(n), name='Momentum_' + str(n))
     df = df.join(M)
+    #Rename to reflect period
+    df.rename(columns = {'MA' : 'MA{}'.format(n)}, inplace=True)	      
     return df
 
 
@@ -70,6 +76,8 @@ def rate_of_change(df, n):
     N = df['Close'].shift(n - 1)
     ROC = pd.Series(M / N, name='ROC_' + str(n))
     df = df.join(ROC)
+    #Rename to reflect period
+    df.rename(columns = {'MA' : 'MA{}'.format(n)}, inplace=True)  
     return df
 
 
@@ -89,6 +97,8 @@ def average_true_range(df, n):
     TR_s = pd.Series(TR_l)
     ATR = pd.Series(TR_s.ewm(span=n, min_periods=n).mean(), name='ATR_' + str(n))
     df = df.join(ATR)
+    #Rename to reflect period
+    df.rename(columns = {'MA' : 'MA{}'.format(n)}, inplace=True)  
     return df
 
 
@@ -107,6 +117,8 @@ def bollinger_bands(df, n):
     b2 = (df['Close'] - MA + 2 * MSD) / (4 * MSD)
     B2 = pd.Series(b2, name='Bollinger%b_' + str(n))
     df = df.join(B2)
+    #Rename to reflect period
+    df.rename(columns = {'MA' : 'MA{}'.format(n)}, inplace=True)     
     return df
 
 
@@ -126,6 +138,7 @@ def ppsr(df):
     psr = {'PP': PP, 'R1': R1, 'S1': S1, 'R2': R2, 'S2': S2, 'R3': R3, 'S3': S3}
     PSR = pd.DataFrame(psr)
     df = df.join(PSR)
+    #Rename to reflect period      
     return df
 
 
@@ -137,6 +150,7 @@ def stochastic_oscillator_k(df):
     """
     SOk = pd.Series((df['Close'] - df['Low']) / (df['High'] - df['Low']), name='SO%k')
     df = df.join(SOk)
+#Rename to reflect period      
     return df
 
 
@@ -149,6 +163,8 @@ def stochastic_oscillator_d(df, n):
     SOk = pd.Series((df['Close'] - df['Low']) / (df['High'] - df['Low']), name='SO%k')
     SOd = pd.Series(SOk.ewm(span=n, min_periods=n).mean(), name='SO%d_' + str(n))
     df = df.join(SOd)
+#Rename to reflect period
+    df.rename(columns = {'SOd' : 'SOd{}'.format(n)}, inplace=True)	      
     return df
 
 
@@ -170,6 +186,8 @@ def trix(df, n):
         i = i + 1
     Trix = pd.Series(ROC_l, name='Trix_' + str(n))
     df = df.join(Trix)
+#Rename to reflect period
+    df.rename(columns = {'Trix' : 'Trix{}'.format(n)}, inplace=True)	      
     return df
 
 
@@ -213,6 +231,8 @@ def average_directional_movement_index(df, n, n_ADX):
     ADX = pd.Series((abs(PosDI - NegDI) / (PosDI + NegDI)).ewm(span=n_ADX, min_periods=n_ADX).mean(),
                     name='ADX_' + str(n) + '_' + str(n_ADX))
     df = df.join(ADX)
+#Rename to reflect period
+    df.rename(columns = {'ADX' : 'ADX{}+{}'.format(n, n_ADX)}, inplace=True)
     return df
 
 
@@ -232,6 +252,12 @@ def macd(df, n_fast, n_slow):
     df = df.join(MACD)
     df = df.join(MACDsign)
     df = df.join(MACDdiff)
+	      #Rename to reflect period
+    df.rename(columns = {'MACD' : 'MACD{}_{}'.format(n_fast,n_slow)}, inplace=True)
+	      #Rename to reflect period
+    df.rename(columns = {'MACDsign' : 'MACDsign{}_{}'.format(n_fast,n_slow)}, inplace=True)
+	      #Rename to reflect period
+    df.rename(columns = {'MACDdiff' : 'MACDdiff{}_{}'.format(n_fast, n_slow)}, inplace=True)
     return df
 
 
@@ -247,6 +273,7 @@ def mass_index(df):
     Mass = EX1 / EX2
     MassI = pd.Series(Mass.rolling(25).sum(), name='Mass Index')
     df = df.join(MassI)
+	      #Rename to reflect period
     return df
 
 
@@ -273,6 +300,8 @@ def vortex_indicator(df, n):
         i = i + 1
     VI = pd.Series(pd.Series(VM).rolling(n).sum() / pd.Series(TR).rolling(n).sum(), name='Vortex_' + str(n))
     df = df.join(VI)
+	      #Rename to reflect period
+    df.rename(columns = {'VI' : 'VI{}'.format(n)}, inplace=True)
     return df
 
 
@@ -307,6 +336,8 @@ def kst_oscillator(df, r1, r2, r3, r4, n1, n2, n3, n4):
         name='KST_' + str(r1) + '_' + str(r2) + '_' + str(r3) + '_' + str(r4) + '_' + str(n1) + '_' + str(
             n2) + '_' + str(n3) + '_' + str(n4))
     df = df.join(KST)
+	      #Rename to reflect period
+    df.rename(columns = {'KSI' : 'KSI{}_{}_{}_{}_{}_{}_{}_{}'.format(r1,r2,r3,r4,n1,n2,n3,n4)}, inplace=True)
     return df
 
 
@@ -340,6 +371,8 @@ def relative_strength_index(df, n):
     NegDI = pd.Series(DoI.ewm(span=n, min_periods=n).mean())
     RSI = pd.Series(PosDI / (PosDI + NegDI), name='RSI_' + str(n))
     df = df.join(RSI)
+	      #Rename to reflect period
+    df.rename(columns = {'RSI' : 'RSI{}'.format(n)}, inplace=True)
     return df
 
 
@@ -359,6 +392,8 @@ def true_strength_index(df, r, s):
     aEMA2 = pd.Series(aEMA1.ewm(span=s, min_periods=s).mean())
     TSI = pd.Series(EMA2 / aEMA2, name='TSI_' + str(r) + '_' + str(s))
     df = df.join(TSI)
+	      #Rename to reflect period
+    df.rename(columns = {'TSI' : 'TSI{}_{}'.format(r, s)}, inplace=True)
     return df
 
 
@@ -375,6 +410,8 @@ def accumulation_distribution(df, n):
     ROC = M / N
     AD = pd.Series(ROC, name='Acc/Dist_ROC_' + str(n))
     df = df.join(AD)
+	      #Rename to reflect period
+    df.rename(columns = {'AD' : 'AD{}'.format(n)}, inplace=True)
     return df
 
 
@@ -387,6 +424,7 @@ def chaikin_oscillator(df):
     ad = (2 * df['Close'] - df['High'] - df['Low']) / (df['High'] - df['Low']) * df['Volume']
     Chaikin = pd.Series(ad.ewm(span=3, min_periods=3).mean() - ad.ewm(span=10, min_periods=10).mean(), name='Chaikin')
     df = df.join(Chaikin)
+	  
     return df
 
 
@@ -411,6 +449,8 @@ def money_flow_index(df, n):
     MFR = pd.Series(PosMF / TotMF)
     MFI = pd.Series(MFR.rolling(n, min_periods=n).mean(), name='MFI_' + str(n))
     df = df.join(MFI)
+	      #Rename to reflect period
+    df.rename(columns = {'MFI' : 'MFI{}'.format(n)}, inplace=True)
     return df
 
 
@@ -434,6 +474,8 @@ def on_balance_volume(df, n):
     OBV = pd.Series(OBV)
     OBV_ma = pd.Series(OBV.rolling(n, min_periods=n).mean(), name='OBV_' + str(n))
     df = df.join(OBV_ma)
+	      #Rename to reflect period
+    df.rename(columns = {'OBC_ma' : 'OBV_ma{}'.format(n)}, inplace=True)
     return df
 
 
@@ -446,6 +488,8 @@ def force_index(df, n):
     """
     F = pd.Series(df['Close'].diff(n) * df['Volume'].diff(n), name='Force_' + str(n))
     df = df.join(F)
+	      #Rename to reflect period
+    df.rename(columns = {'F' : 'F{}'.format(n)}, inplace=True)
     return df
 
 
@@ -459,6 +503,8 @@ def ease_of_movement(df, n):
     EoM = (df['High'].diff(1) + df['Low'].diff(1)) * (df['High'] - df['Low']) / (2 * df['Volume'])
     Eom_ma = pd.Series(EoM.rolling(n, min_periods=n).mean(), name='EoM_' + str(n))
     df = df.join(Eom_ma)
+	      #Rename to reflect period
+    df.rename(columns = {'Eom_ma' : 'Eom_ma{}'.format(n)}, inplace=True)
     return df
 
 
@@ -473,6 +519,8 @@ def commodity_channel_index(df, n):
     CCI = pd.Series((PP - PP.rolling(n, min_periods=n).mean()) / PP.rolling(n, min_periods=n).std(),
                     name='CCI_' + str(n))
     df = df.join(CCI)
+	      #Rename to reflect period
+    df.rename(columns = {'CCI' : 'CCI{}'.format(n)}, inplace=True)
     return df
 
 
@@ -491,6 +539,8 @@ def coppock_curve(df, n):
     ROC2 = M / N
     Copp = pd.Series((ROC1 + ROC2).ewm(span=n, min_periods=n).mean(), name='Copp_' + str(n))
     df = df.join(Copp)
+	      #Rename to reflect period
+    df.rename(columns = {'Copp' : 'Copp{}'.format(n)}, inplace=True)
     return df
 
 
@@ -510,6 +560,8 @@ def keltner_channel(df, n):
     df = df.join(KelChM)
     df = df.join(KelChU)
     df = df.join(KelChD)
+	      #Rename to reflect period
+    df.rename(columns = {'KelChU' : 'KelChU{}'.format(n),'KelChD' : 'KelChD{}'.format(n),'KelChM' : 'KelChM{}'.format(n)}, inplace=True)
     return df
 
 
@@ -533,6 +585,8 @@ def ultimate_oscillator(df):
                                  pd.Series(BP_l).rolling(28).sum() / pd.Series(TR_l).rolling(28).sum()),
                      name='Ultimate_Osc')
     df = df.join(UltO)
+	      #reflect perion
+    df.rename(columns = {'UltO' : 'UltO{}'.format(n)}, inplace=True)
     return df
 
 
@@ -556,7 +610,10 @@ def donchian_channel(df, n):
 
     donchian_chan = pd.Series(dc_l, name='Donchian_' + str(n))
     donchian_chan = donchian_chan.shift(n - 1)
-    return df.join(donchian_chan)
+    df.join(donchian_chan)
+	      #reflect perion
+    df.rename(columns = {'donchian_chan' : 'donchian_chan{}'.format(n)}, inplace=True)
+    return df
 
 
 def standard_deviation(df, n):
@@ -567,4 +624,5 @@ def standard_deviation(df, n):
     :return: pandas.DataFrame
     """
     df = df.join(pd.Series(df['Close'].rolling(n, min_periods=n).std(), name='STD_' + str(n)))
+	      #reflect perion
     return df
